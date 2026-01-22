@@ -65,10 +65,10 @@
                             <option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option>
                         </select>
                         <input type="text" id="namaSiswa" placeholder="Nama Siswa" class="w-full p-2 border rounded-lg text-sm">
-                        <textarea id="deskripsi" placeholder="Prestasi/Catatan Guru..." class="w-full p-2 border rounded-lg text-sm h-20"></textarea>
+                        <textarea id="deskripsi" placeholder="Pelanggaran atau Prestasi..." class="w-full p-2 border rounded-lg text-sm h-20"></textarea>
                         <div class="flex gap-2">
                             <button onclick="updateBintang(1)" class="flex-1 bg-green-500 text-white py-3 rounded-xl font-bold">+ Bintang</button>
-                            <button onclick="updateBintang(-1)" class="w-16 bg-red-100 text-red-600 py-3 rounded-xl font-bold">-</button>
+                            <button onclick="updateBintang(-1)" class="w-16 bg-red-500 text-white py-3 rounded-xl font-bold">- Bintang</button>
                         </div>
                     </div>
                 </div>
@@ -76,7 +76,7 @@
 
             <div id="content" class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-bold text-xl">Klasemen Prestasi ✨</h3>
+                    <h3 class="font-bold text-xl text-slate-800">Klasemen Poin ✨</h3>
                     <select onchange="initData()" id="filterKelas" class="border p-2 rounded-lg text-sm">
                         <option value="Semua">Semua Kelas</option>
                         <option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
-                        <thead><tr class="text-gray-400 text-sm border-b"><th class="pb-4">Nama</th><th class="pb-4 text-center">Kelas</th><th class="pb-4 text-center">Bintang</th><th class="pb-4">Info</th></tr></thead>
+                        <thead><tr class="text-gray-400 text-sm border-b"><th class="pb-4">Nama</th><th class="pb-4 text-center">Kelas</th><th class="pb-4 text-center">Bintang</th><th class="pb-4">Info Terakhir</th></tr></thead>
                         <tbody id="tableBody"></tbody>
                     </table>
                 </div>
@@ -112,11 +112,7 @@
         function handleLogin() {
             const u = document.getElementById('username').value.toLowerCase().trim();
             const p = document.getElementById('password').value;
-            
-            // 1. Cek Admin/Guru
             const staff = users.find(x => x.user === u && x.pass === p);
-            
-            // 2. Cek Login Siswa (nama + nama123)
             const isSiswaLogin = p === (u + "123");
             const dataSiswaExists = currentSiswaData.find(s => s.nama.toLowerCase() === u);
 
@@ -133,7 +129,7 @@
                 document.getElementById('sidebar').classList.add('hidden');
                 document.getElementById('content').classList.replace('lg:col-span-8', 'lg:col-span-12');
             } else {
-                alert("Login gagal! Siswa hanya bisa login jika datanya sudah didaftarkan Guru.");
+                alert("Login gagal!");
             }
             initData();
         }
@@ -155,8 +151,9 @@
             let filtered = filter === "Semua" ? data : data.filter(s => s.kelas === filter);
             filtered.sort((a, b) => b.bintang - a.bintang);
             filtered.forEach((s, index) => {
-                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '';
-                body.innerHTML += `<tr class="border-b"><td class="py-4 font-bold">${medal} ${s.nama}</td><td class="py-4 text-center">${s.kelas}</td><td class="py-4 text-center text-yellow-600 font-black">⭐ ${s.bintang}</td><td class="py-4 text-xs italic text-gray-400">${s.info}</td></tr>`;
+                const medal = index === 0 && s.bintang > 0 ? '🥇' : index === 1 && s.bintang > 0 ? '🥈' : index === 2 && s.bintang > 0 ? '🥉' : '';
+                const starColor = s.bintang < 0 ? 'text-red-600' : 'text-yellow-600';
+                body.innerHTML += `<tr class="border-b"><td class="py-4 font-bold">${medal} ${s.nama}</td><td class="py-4 text-center">${s.kelas}</td><td class="py-4 text-center ${starColor} font-black">⭐ ${s.bintang}</td><td class="py-4 text-xs italic text-gray-400">${s.info}</td></tr>`;
             });
         }
 
@@ -171,10 +168,11 @@
             
             ref.once('value').then(snap => {
                 let current = snap.exists() ? snap.val().bintang : 0;
+                // BAGIAN PERUBAHAN: Math.max dihapus agar bisa minus
                 ref.set({ 
                     nama: namaInput, 
                     kelas: kelas, 
-                    bintang: Math.max(0, current + n), 
+                    bintang: current + n, 
                     info: info 
                 });
             });
@@ -189,13 +187,12 @@
             if(u && p) {
                 users.push({ user: u, pass: p, role: r });
                 localStorage.setItem('users', JSON.stringify(users));
-                alert("Akun " + r + " berhasil dibuat!");
+                alert("Akun berhasil dibuat!");
                 document.getElementById('newUserName').value = '';
                 document.getElementById('newUserPass').value = '';
             }
         }
         
-        // Load data saat pertama kali buka untuk verifikasi login siswa
         initData();
     </script>
 </body>
