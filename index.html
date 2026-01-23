@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Bintang Prestasi v8 - Full Management</title>
+    <title>Sistem Bintang Prestasi - Final Stabil</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
-    <style>
-        .hidden { display: none; }
-        @media print { .no-print { display: none !important; } .print-only { display: block !important; } }
-    </style>
+    <style>.hidden { display: none; } @media print { .no-print { display: none !important; } .print-only { display: block !important; } }</style>
 </head>
 <body class="bg-slate-50 font-sans min-h-screen">
 
     <nav class="bg-white border-b p-4 sticky top-0 z-50 shadow-sm no-print">
         <div class="container mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-2"><span class="text-2xl">🌟</span><h2 class="font-bold text-xl text-slate-800 uppercase tracking-tighter">Bintang Sekolah</h2></div>
+            <div class="flex items-center gap-2 font-bold text-xl text-slate-800 uppercase tracking-tighter">🌟 Bintang Sekolah</div>
             <div id="navButtons" class="hidden flex gap-3">
-                <button onclick="bukaMenuCetak()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-100"><i class="fas fa-print mr-1"></i> Cetak</button>
-                <button onclick="location.reload()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-red-100">Keluar</button>
+                <button onclick="window.print()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-100"><i class="fas fa-print mr-1"></i> Cetak</button>
+                <button onclick="location.reload()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-bold">Keluar</button>
             </div>
         </div>
     </nav>
@@ -42,46 +39,33 @@
                     </select>
                 </div>
                 <div class="flex gap-2 pt-2">
-                    <button onclick="tutupModalEdit()" class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-xl">Batal</button>
-                    <button onclick="updateDataSiswa()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                    <button onclick="tutupModalEdit()" class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-xl text-sm">Batal</button>
+                    <button onclick="updateDataSiswa()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg text-sm">Simpan</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="modalCetak" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 no-print">
-        <div class="bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl">
-            <h3 class="font-bold text-xl mb-6">Pilih Jenis Laporan</h3>
-            <div class="space-y-3">
-                <button onclick="cetakLaporan('sekolah')" class="w-full p-4 bg-slate-50 border hover:border-blue-500 rounded-2xl text-left flex items-center gap-3">
-                    <span class="bg-blue-100 p-2 rounded-lg">🏫</span> <div><p class="font-bold">Rekap Per Sekolah</p></div>
-                </button>
-                <button onclick="cetakLaporan('kelas')" class="w-full p-4 bg-slate-50 border hover:border-blue-500 rounded-2xl text-left flex items-center gap-3">
-                    <span class="bg-green-100 p-2 rounded-lg">👥</span> <div><p class="font-bold">Rekap Per Kelas</p></div>
-                </button>
-            </div>
-            <button onclick="tutupMenuCetak()" class="w-full mt-6 text-gray-400 font-bold text-sm">Batal</button>
-        </div>
-    </div>
-
     <div class="container mx-auto p-4 md:p-6">
         <div id="loginPage" class="flex flex-col items-center justify-center py-20 no-print">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl w-full max-w-md border">
-                <h1 class="text-2xl font-bold text-center mb-6">Bintang Prestasi</h1>
-                <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-gray-50 border rounded-2xl mb-3 outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-gray-50 border rounded-2xl mb-6 outline-none">
-                <button onclick="handleLogin()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg">Masuk</button>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-xl w-full max-w-md border border-gray-100 text-center">
+                <div class="inline-block p-4 bg-yellow-100 rounded-full mb-6 text-4xl">🏆</div>
+                <h1 class="text-2xl font-bold mb-8">Masuk Sistem</h1>
+                <input type="text" id="username" placeholder="Nama Siswa (Contoh: Budi)" class="w-full p-4 bg-gray-50 border rounded-2xl mb-3 outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" id="password" placeholder="Password (Nama+123)" class="w-full p-4 bg-gray-50 border rounded-2xl mb-6 outline-none focus:ring-2 focus:ring-blue-500">
+                <button onclick="handleLogin()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-blue-700 transition duration-300">Masuk</button>
+                <p id="loginError" class="text-red-500 text-sm mt-4 hidden">Username atau Password salah!</p>
             </div>
         </div>
 
         <div id="mainContent" class="hidden">
             <div id="siswaView" class="hidden max-w-2xl mx-auto space-y-6">
                 <div class="bg-indigo-700 p-8 rounded-[2.5rem] text-white shadow-xl">
-                    <h2 id="siswaNameTitle" class="text-3xl font-bold mb-4">-</h2>
+                    <h2 id="siswaNameTitle" class="text-3xl font-bold mb-4 uppercase">-</h2>
                     <div class="text-5xl font-black">⭐ <span id="siswaTotalBintang">0</span></div>
                 </div>
                 <div class="bg-white p-6 rounded-[2.5rem] border shadow-sm">
-                    <h3 class="font-bold mb-4">📜 Riwayat Bintang Saya</h3>
+                    <h3 class="font-bold mb-4 tracking-tight"><i class="fas fa-list-ul mr-2 text-blue-500"></i>Riwayat Bintang Saya</h3>
                     <div id="siswaHistoryList" class="space-y-3"></div>
                 </div>
             </div>
@@ -92,20 +76,20 @@
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="lg:col-span-4 space-y-6 no-print">
                         <div class="bg-white p-6 rounded-[2rem] border shadow-sm">
-                            <h3 class="font-bold text-blue-600 mb-4 uppercase text-xs tracking-widest">Pendaftaran</h3>
+                            <h3 class="font-bold text-blue-600 mb-4 uppercase text-xs tracking-widest">Registrasi</h3>
                             <input type="text" id="newSiswaNama" placeholder="Nama Lengkap" class="w-full p-3 bg-gray-50 border rounded-xl mb-2 text-sm outline-none">
-                            <select id="newSiswaKelas" class="w-full p-3 bg-gray-50 border rounded-xl mb-4 text-sm outline-none">
+                            <select id="newSiswaKelas" class="w-full p-3 bg-gray-50 border rounded-xl mb-4 text-sm">
                                 <option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option>
                                 <option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option>
                             </select>
-                            <button onclick="tambahSiswa()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700">Daftarkan Siswa</button>
+                            <button onclick="tambahSiswa()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold shadow-md hover:bg-blue-700">Daftarkan Siswa</button>
                         </div>
                     </div>
 
                     <div class="lg:col-span-8 bg-white p-6 rounded-[2.5rem] border shadow-sm">
                         <div class="flex justify-between items-center mb-6 no-print">
-                            <h3 class="font-bold text-xl">Data Bintang Siswa</h3>
-                            <select onchange="renderAdminTable()" id="filterKelas" class="bg-gray-50 border p-2 rounded-xl text-sm outline-none">
+                            <h3 class="font-bold text-xl">Klasemen Bintang</h3>
+                            <select onchange="renderAdminTable()" id="filterKelas" class="bg-gray-50 border p-2 rounded-xl text-sm">
                                 <option value="Semua">Semua Kelas</option>
                                 <option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option>
                                 <option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option>
@@ -116,7 +100,7 @@
                             <table class="w-full text-left">
                                 <thead>
                                     <tr class="text-gray-400 border-b text-[10px] uppercase">
-                                        <th class="pb-4">Siswa</th><th class="pb-4 text-center">Bintang</th><th class="pb-4 text-right no-print">Kelola</th>
+                                        <th class="pb-4">Nama Siswa</th><th class="pb-4 text-center">Bintang</th><th class="pb-4 text-right no-print">Update</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBodyAdmin"></tbody>
@@ -147,19 +131,17 @@
                 allSiswa = [];
                 const data = snapshot.val();
                 let rekapKelas = {"Kelas 1":0, "Kelas 2":0, "Kelas 3":0, "Kelas 4":0, "Kelas 5":0, "Kelas 6":0};
-
                 for (let id in data) {
                     let s = data[id]; s.id = id;
                     allSiswa.push(s);
                     if(rekapKelas[s.kelas] !== undefined) rekapKelas[s.kelas] += s.bintang;
                 }
-                
                 const rekapList = document.getElementById('rekapKelasList');
                 if(rekapList) {
                     rekapList.innerHTML = '';
                     for(let k in rekapKelas) {
                         rekapList.innerHTML += `<div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
-                            <p class="text-[9px] font-bold text-gray-400 uppercase">${k}</p>
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">${k}</p>
                             <p class="text-lg font-black text-slate-700">${rekapKelas[k]}</p>
                         </div>`;
                     }
@@ -169,16 +151,26 @@
         }
 
         async function handleLogin() {
-            const u = document.getElementById('username').value.toLowerCase().trim();
-            const p = document.getElementById('password').value.trim();
-            if (u === 'admin' && p === 'admin123') { showView('admin'); return; }
-            const found = allSiswa.find(s => s.nama.toLowerCase().trim() === u);
-            if (found && p === (u + "123")) {
+            const uInput = document.getElementById('username').value.toLowerCase().trim();
+            const pInput = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('loginError');
+
+            if (uInput === 'admin' && pInput === 'admin123') {
+                showView('admin'); return;
+            }
+
+            // Cari siswa dengan nama yang cocok (case insensitive & trim)
+            const found = allSiswa.find(s => s.nama.toLowerCase().trim() === uInput);
+            
+            if (found && pInput === (uInput + "123")) {
+                errorMsg.classList.add('hidden');
                 showView('siswa');
                 document.getElementById('siswaNameTitle').innerText = found.nama;
                 document.getElementById('siswaTotalBintang').innerText = found.bintang;
                 loadHistory(found.id);
-            } else { alert("Login Gagal!"); }
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
         }
 
         function showView(role) {
@@ -192,27 +184,28 @@
         function renderAdminTable() {
             const body = document.getElementById('tableBodyAdmin');
             const filter = document.getElementById('filterKelas').value;
+            if(!body) return;
             body.innerHTML = '';
             let filtered = filter === "Semua" ? allSiswa : allSiswa.filter(s => s.kelas === filter);
             filtered.sort((a,b) => b.bintang - a.bintang);
             filtered.forEach(s => {
                 body.innerHTML += `
-                    <tr class="border-b hover:bg-slate-50">
+                    <tr class="border-b hover:bg-slate-50 transition">
                         <td class="py-4">
                             <div class="flex items-center gap-2">
-                                <button onclick="bukaModalEdit('${s.id}', '${s.nama}', '${s.kelas}')" class="no-print text-blue-400 hover:text-blue-600">
+                                <button onclick="bukaModalEdit('${s.id}', '${s.nama}', '${s.kelas}')" class="no-print text-blue-400 hover:text-blue-600 px-1">
                                     <i class="fas fa-edit text-xs"></i>
                                 </button>
-                                <div><b class="text-slate-800">${s.nama}</b><br><span class="text-[9px] text-gray-400 uppercase font-bold">${s.kelas}</span></div>
+                                <div><b class="text-slate-800">${s.nama}</b><br><span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${s.kelas}</span></div>
                             </div>
                         </td>
                         <td class="py-4 text-center font-black text-blue-600 text-lg">⭐ ${s.bintang}</td>
                         <td class="py-4 no-print text-right">
                             <div class="flex items-center gap-1 justify-end">
-                                <input type="number" id="poin-${s.id}" placeholder="±" class="w-10 p-2 bg-gray-100 rounded-lg text-xs font-bold text-center outline-none focus:ring-1 focus:ring-blue-400">
+                                <input type="number" id="poin-${s.id}" placeholder="±" class="w-10 p-2 bg-gray-100 rounded-lg text-xs font-bold text-center outline-none">
                                 <input type="text" id="ket-${s.id}" placeholder="Alasan" class="w-20 p-2 bg-gray-100 rounded-lg text-[10px] outline-none">
-                                <button onclick="simpanPoin('${s.id}')" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"><i class="fas fa-paper-plane text-[10px]"></i></button>
-                                <button onclick="hapusSiswa('${s.id}')" class="bg-red-50 text-red-300 p-2 rounded-lg hover:bg-red-500 hover:text-white transition ml-1"><i class="fas fa-trash text-[10px]"></i></button>
+                                <button onclick="simpanPoin('${s.id}')" class="bg-blue-600 text-white p-2 rounded-lg"><i class="fas fa-paper-plane text-[10px]"></i></button>
+                                <button onclick="hapusSiswa('${s.id}')" class="bg-red-50 text-red-300 p-2 rounded-lg hover:bg-red-500 hover:text-white ml-1"><i class="fas fa-trash text-[10px]"></i></button>
                             </div>
                         </td>
                     </tr>`;
@@ -222,8 +215,62 @@
         function simpanPoin(id) {
             const p = document.getElementById('poin-'+id).value;
             const k = document.getElementById('ket-'+id).value;
-            if(!p || !k) return alert("Isi Poin & Alasan!");
+            if(!p || !k) return alert("Poin & Alasan wajib diisi!");
             const n = parseInt(p);
             const ref = db.ref('dataSiswa/' + id);
             ref.once('value').then(snap => {
-                const total = (snap.val().b
+                const total = (snap.val().bintang || 0) + n;
+                ref.update({ bintang: total });
+                db.ref('history/' + id).push({
+                    tgl: new Date().toLocaleString('id-ID'), poin: n > 0 ? `+${n}` : n, ket: k
+                });
+                document.getElementById('poin-'+id).value = ''; document.getElementById('ket-'+id).value = '';
+            });
+        }
+
+        function bukaModalEdit(id, nama, kelas) {
+            document.getElementById('editSiswaId').value = id;
+            document.getElementById('editSiswaNama').value = nama;
+            document.getElementById('editSiswaKelas').value = kelas;
+            document.getElementById('modalEdit').classList.remove('hidden');
+        }
+        function tutupModalEdit() { document.getElementById('modalEdit').classList.add('hidden'); }
+        function updateDataSiswa() {
+            const id = document.getElementById('editSiswaId').value;
+            const namaBaru = document.getElementById('editSiswaNama').value.trim();
+            const kelasBaru = document.getElementById('editSiswaKelas').value;
+            if(!namaBaru) return alert("Nama tidak boleh kosong!");
+            db.ref('dataSiswa/' + id).update({ nama: namaBaru, kelas: kelasBaru });
+            tutupModalEdit();
+        }
+
+        function loadHistory(id) {
+            db.ref('history/' + id).on('value', (snap) => {
+                const list = document.getElementById('siswaHistoryList');
+                list.innerHTML = '';
+                const data = snap.val();
+                if(!data) return list.innerHTML = "<p class='text-gray-400 py-10 text-center'>Belum ada riwayat perolehan.</p>";
+                Object.values(data).reverse().forEach(h => {
+                    list.innerHTML += `<div class="p-4 bg-slate-50 rounded-2xl border flex justify-between items-center shadow-sm">
+                        <div class="text-xs"><b>${h.ket}</b><br><span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">${h.tgl}</span></div>
+                        <div class="font-black ${h.poin.toString().includes('+') ? 'text-green-600' : 'text-red-600'}">${h.poin} ⭐</div>
+                    </div>`;
+                });
+            });
+        }
+
+        function tambahSiswa() {
+            const n = document.getElementById('newSiswaNama').value.trim();
+            const k = document.getElementById('newSiswaKelas').value;
+            if(!n) return alert("Isi Nama!");
+            const id = (n + k).replace(/\s+/g, '-').toLowerCase();
+            db.ref('dataSiswa/' + id).set({ nama: n, kelas: k, bintang: 0 });
+            document.getElementById('newSiswaNama').value = '';
+        }
+
+        function hapusSiswa(id) { if(confirm("Hapus siswa dan riwayatnya permanen?")) { db.ref('dataSiswa/' + id).remove(); db.ref('history/' + id).remove(); } }
+
+        preloadData();
+    </script>
+</body>
+</html>
