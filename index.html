@@ -3,19 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Bintang Prestasi v7 - Laporan Lengkap</title>
+    <title>Sistem Bintang Prestasi v8 - Full Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <style>
         .hidden { display: none; }
-        @media print { 
-            .no-print { display: none !important; } 
-            .print-only { display: block !important; }
-            body { background: white; }
-            .card-shadow { shadow: none; border: 1px solid #eee; }
-        }
+        @media print { .no-print { display: none !important; } .print-only { display: block !important; } }
     </style>
 </head>
 <body class="bg-slate-50 font-sans min-h-screen">
@@ -24,37 +19,55 @@
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center gap-2"><span class="text-2xl">🌟</span><h2 class="font-bold text-xl text-slate-800 uppercase tracking-tighter">Bintang Sekolah</h2></div>
             <div id="navButtons" class="hidden flex gap-3">
-                <button onclick="bukaMenuCetak()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-100"><i class="fas fa-print mr-1"></i> Menu Cetak</button>
+                <button onclick="bukaMenuCetak()" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-blue-100"><i class="fas fa-print mr-1"></i> Cetak</button>
                 <button onclick="location.reload()" class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-sm font-bold hover:bg-red-100">Keluar</button>
             </div>
         </div>
     </nav>
+
+    <div id="modalEdit" class="hidden fixed inset-0 bg-black/60 z-[70] flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-[2rem] p-8 w-full max-w-sm shadow-2xl">
+            <h3 class="font-bold text-xl mb-4 text-slate-800">Edit Data Siswa</h3>
+            <input type="hidden" id="editSiswaId">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-gray-400 uppercase">Nama Lengkap</label>
+                    <input type="text" id="editSiswaNama" class="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-gray-400 uppercase">Kelas</label>
+                    <select id="editSiswaKelas" class="w-full p-3 bg-gray-50 border rounded-xl outline-none">
+                        <option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option>
+                        <option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option>
+                    </select>
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button onclick="tutupModalEdit()" class="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-xl">Batal</button>
+                    <button onclick="updateDataSiswa()" class="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="modalCetak" class="hidden fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4 no-print">
         <div class="bg-white rounded-[2rem] p-8 w-full max-w-md shadow-2xl">
             <h3 class="font-bold text-xl mb-6">Pilih Jenis Laporan</h3>
             <div class="space-y-3">
                 <button onclick="cetakLaporan('sekolah')" class="w-full p-4 bg-slate-50 border hover:border-blue-500 rounded-2xl text-left flex items-center gap-3">
-                    <span class="bg-blue-100 p-2 rounded-lg">🏫</span> <div><p class="font-bold">Rekap Per Sekolah</p><p class="text-xs text-gray-500">Semua kelas dalam satu daftar</p></div>
+                    <span class="bg-blue-100 p-2 rounded-lg">🏫</span> <div><p class="font-bold">Rekap Per Sekolah</p></div>
                 </button>
                 <button onclick="cetakLaporan('kelas')" class="w-full p-4 bg-slate-50 border hover:border-blue-500 rounded-2xl text-left flex items-center gap-3">
-                    <span class="bg-green-100 p-2 rounded-lg">👥</span> <div><p class="font-bold">Rekap Per Kelas</p><p class="text-xs text-gray-500">Hanya kelas yang dipilih saat ini</p></div>
-                </button>
-                <button onclick="cetakLaporan('siswa')" class="w-full p-4 bg-slate-50 border hover:border-blue-500 rounded-2xl text-left flex items-center gap-3">
-                    <span class="bg-purple-100 p-2 rounded-lg">👤</span> <div><p class="font-bold">Rekap Per Siswa</p><p class="text-xs text-gray-500">Riwayat detail satu siswa tertentu</p></div>
+                    <span class="bg-green-100 p-2 rounded-lg">👥</span> <div><p class="font-bold">Rekap Per Kelas</p></div>
                 </button>
             </div>
-            <button onclick="tutupMenuCetak()" class="w-full mt-6 text-gray-400 font-bold">Batal</button>
+            <button onclick="tutupMenuCetak()" class="w-full mt-6 text-gray-400 font-bold text-sm">Batal</button>
         </div>
     </div>
 
     <div class="container mx-auto p-4 md:p-6">
-        
         <div id="loginPage" class="flex flex-col items-center justify-center py-20 no-print">
             <div class="bg-white p-8 rounded-[2.5rem] shadow-xl w-full max-w-md border">
-                <h1 class="text-2xl font-bold text-center mb-6">Selamat Datang Di Aplikasi
-                Leaderboard
-                SDN 165 Tanjung Jabung Barat</h1>
+                <h1 class="text-2xl font-bold text-center mb-6">Bintang Prestasi</h1>
                 <input type="text" id="username" placeholder="Username" class="w-full p-4 bg-gray-50 border rounded-2xl mb-3 outline-none focus:ring-2 focus:ring-blue-500">
                 <input type="password" id="password" placeholder="Password" class="w-full p-4 bg-gray-50 border rounded-2xl mb-6 outline-none">
                 <button onclick="handleLogin()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-2xl shadow-lg">Masuk</button>
@@ -63,63 +76,47 @@
 
         <div id="mainContent" class="hidden">
             <div id="siswaView" class="hidden max-w-2xl mx-auto space-y-6">
-                <div class="bg-blue-600 p-8 rounded-[2.5rem] text-white shadow-xl">
+                <div class="bg-indigo-700 p-8 rounded-[2.5rem] text-white shadow-xl">
                     <h2 id="siswaNameTitle" class="text-3xl font-bold mb-4">-</h2>
                     <div class="text-5xl font-black">⭐ <span id="siswaTotalBintang">0</span></div>
                 </div>
                 <div class="bg-white p-6 rounded-[2.5rem] border shadow-sm">
-                    <h3 class="font-bold mb-4"><i class="fas fa-history mr-2"></i>Riwayat Saya</h3>
+                    <h3 class="font-bold mb-4">📜 Riwayat Bintang Saya</h3>
                     <div id="siswaHistoryList" class="space-y-3"></div>
                 </div>
             </div>
 
             <div id="adminView" class="hidden space-y-6">
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 no-print">
-                    <div class="bg-white p-4 rounded-2xl border text-center">
-                        <p class="text-[10px] uppercase font-bold text-gray-400">Total Bintang Sekolah</p>
-                        <p id="rekapTotalSekolah" class="text-2xl font-black text-blue-600">0</p>
-                    </div>
-                    <div id="rekapKelasList" class="contents"></div>
-                </div>
+                <div id="rekapKelasList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 no-print"></div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                     <div class="lg:col-span-4 space-y-6 no-print">
                         <div class="bg-white p-6 rounded-[2rem] border shadow-sm">
-                            <h3 class="font-bold text-blue-600 mb-4">Daftar Siswa Baru</h3>
-                            <input type="text" id="newSiswaNama" placeholder="Nama Lengkap" class="w-full p-3 bg-gray-50 border rounded-xl mb-2 text-sm">
-                            <select id="newSiswaKelas" class="w-full p-3 bg-gray-50 border rounded-xl mb-4 text-sm">
+                            <h3 class="font-bold text-blue-600 mb-4 uppercase text-xs tracking-widest">Pendaftaran</h3>
+                            <input type="text" id="newSiswaNama" placeholder="Nama Lengkap" class="w-full p-3 bg-gray-50 border rounded-xl mb-2 text-sm outline-none">
+                            <select id="newSiswaKelas" class="w-full p-3 bg-gray-50 border rounded-xl mb-4 text-sm outline-none">
                                 <option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option>
                                 <option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option>
                             </select>
-                            <button onclick="tambahSiswa()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Daftarkan</button>
-                        </div>
-                        <div class="bg-white p-6 rounded-[2rem] border shadow-sm">
-                            <h3 class="font-bold text-purple-600 mb-4">Akun Login</h3>
-                            <div id="accountList" class="space-y-2 max-h-40 overflow-y-auto pr-2"></div>
+                            <button onclick="tambahSiswa()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700">Daftarkan Siswa</button>
                         </div>
                     </div>
 
                     <div class="lg:col-span-8 bg-white p-6 rounded-[2.5rem] border shadow-sm">
                         <div class="flex justify-between items-center mb-6 no-print">
-                            <h3 class="font-bold text-xl">Klasemen Bintang</h3>
-                            <select onchange="renderAdminTable()" id="filterKelas" class="bg-gray-50 border p-2 rounded-xl text-sm">
+                            <h3 class="font-bold text-xl">Data Bintang Siswa</h3>
+                            <select onchange="renderAdminTable()" id="filterKelas" class="bg-gray-50 border p-2 rounded-xl text-sm outline-none">
                                 <option value="Semua">Semua Kelas</option>
                                 <option>Kelas 1</option><option>Kelas 2</option><option>Kelas 3</option>
                                 <option>Kelas 4</option><option>Kelas 5</option><option>Kelas 6</option>
                             </select>
                         </div>
 
-                        <div class="print-only hidden text-center border-b-2 border-black pb-4 mb-6">
-                            <h1 class="text-2xl font-black uppercase">Laporan Bintang Prestasi</h1>
-                            <p id="judulCetak" class="font-bold">-</p>
-                            <p class="text-sm">Tanggal Cetak: <span id="tglCetak"></span></p>
-                        </div>
-
                         <div class="overflow-x-auto">
                             <table class="w-full text-left">
                                 <thead>
                                     <tr class="text-gray-400 border-b text-[10px] uppercase">
-                                        <th class="pb-4">Siswa</th><th class="pb-4 text-center">Bintang</th><th class="pb-4 text-right no-print">Aksi</th>
+                                        <th class="pb-4">Siswa</th><th class="pb-4 text-center">Bintang</th><th class="pb-4 text-right no-print">Kelola</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableBodyAdmin"></tbody>
@@ -144,40 +141,27 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         let allSiswa = [];
-        let currentRole = "";
-        let currentSiswaId = "";
 
         function preloadData() {
             db.ref('dataSiswa').on('value', (snapshot) => {
                 allSiswa = [];
                 const data = snapshot.val();
-                const accList = document.getElementById('accountList');
-                if(accList) accList.innerHTML = '';
-                
-                let totalSekolah = 0;
                 let rekapKelas = {"Kelas 1":0, "Kelas 2":0, "Kelas 3":0, "Kelas 4":0, "Kelas 5":0, "Kelas 6":0};
 
                 for (let id in data) {
                     let s = data[id]; s.id = id;
                     allSiswa.push(s);
-                    totalSekolah += s.bintang;
                     if(rekapKelas[s.kelas] !== undefined) rekapKelas[s.kelas] += s.bintang;
-                    
-                    if(accList) {
-                        accList.innerHTML += `<div class="p-2 bg-slate-50 rounded-lg border text-[9px]"><b>${s.nama}</b> (P: ${s.nama.toLowerCase()}123)</div>`;
-                    }
                 }
                 
-                document.getElementById('rekapTotalSekolah').innerText = totalSekolah;
                 const rekapList = document.getElementById('rekapKelasList');
                 if(rekapList) {
                     rekapList.innerHTML = '';
                     for(let k in rekapKelas) {
-                        rekapList.innerHTML += `
-                            <div class="bg-white p-3 rounded-2xl border text-center">
-                                <p class="text-[9px] font-bold text-gray-400 uppercase">${k}</p>
-                                <p class="text-lg font-black text-slate-700">${rekapKelas[k]}</p>
-                            </div>`;
+                        rekapList.innerHTML += `<div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase">${k}</p>
+                            <p class="text-lg font-black text-slate-700">${rekapKelas[k]}</p>
+                        </div>`;
                     }
                 }
                 renderAdminTable();
@@ -187,12 +171,9 @@
         async function handleLogin() {
             const u = document.getElementById('username').value.toLowerCase().trim();
             const p = document.getElementById('password').value.trim();
-            if (u === 'admin' && p === 'admin123') { 
-                currentRole = 'admin'; showView('admin'); return; 
-            }
+            if (u === 'admin' && p === 'admin123') { showView('admin'); return; }
             const found = allSiswa.find(s => s.nama.toLowerCase().trim() === u);
             if (found && p === (u + "123")) {
-                currentRole = 'siswa'; currentSiswaId = found.id;
                 showView('siswa');
                 document.getElementById('siswaNameTitle').innerText = found.nama;
                 document.getElementById('siswaTotalBintang').innerText = found.bintang;
@@ -216,14 +197,22 @@
             filtered.sort((a,b) => b.bintang - a.bintang);
             filtered.forEach(s => {
                 body.innerHTML += `
-                    <tr class="border-b">
-                        <td class="py-4"><b>${s.nama}</b><br><span class="text-[9px] text-gray-400 font-bold">${s.kelas}</span></td>
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="py-4">
+                            <div class="flex items-center gap-2">
+                                <button onclick="bukaModalEdit('${s.id}', '${s.nama}', '${s.kelas}')" class="no-print text-blue-400 hover:text-blue-600">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </button>
+                                <div><b class="text-slate-800">${s.nama}</b><br><span class="text-[9px] text-gray-400 uppercase font-bold">${s.kelas}</span></div>
+                            </div>
+                        </td>
                         <td class="py-4 text-center font-black text-blue-600 text-lg">⭐ ${s.bintang}</td>
                         <td class="py-4 no-print text-right">
                             <div class="flex items-center gap-1 justify-end">
-                                <input type="number" id="poin-${s.id}" placeholder="±" class="w-10 p-2 bg-gray-100 rounded-lg text-xs font-bold text-center">
-                                <input type="text" id="ket-${s.id}" placeholder="Alasan" class="w-20 p-2 bg-gray-100 rounded-lg text-[10px]">
-                                <button onclick="simpanPoin('${s.id}')" class="bg-blue-600 text-white p-2 rounded-lg"><i class="fas fa-check"></i></button>
+                                <input type="number" id="poin-${s.id}" placeholder="±" class="w-10 p-2 bg-gray-100 rounded-lg text-xs font-bold text-center outline-none focus:ring-1 focus:ring-blue-400">
+                                <input type="text" id="ket-${s.id}" placeholder="Alasan" class="w-20 p-2 bg-gray-100 rounded-lg text-[10px] outline-none">
+                                <button onclick="simpanPoin('${s.id}')" class="bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700"><i class="fas fa-paper-plane text-[10px]"></i></button>
+                                <button onclick="hapusSiswa('${s.id}')" class="bg-red-50 text-red-300 p-2 rounded-lg hover:bg-red-500 hover:text-white transition ml-1"><i class="fas fa-trash text-[10px]"></i></button>
                             </div>
                         </td>
                     </tr>`;
@@ -233,71 +222,8 @@
         function simpanPoin(id) {
             const p = document.getElementById('poin-'+id).value;
             const k = document.getElementById('ket-'+id).value;
-            if(!p || !k) return alert("Lengkapi data!");
+            if(!p || !k) return alert("Isi Poin & Alasan!");
             const n = parseInt(p);
             const ref = db.ref('dataSiswa/' + id);
             ref.once('value').then(snap => {
-                const total = (snap.val().bintang || 0) + n;
-                ref.update({ bintang: total });
-                db.ref('history/' + id).push({
-                    tgl: new Date().toLocaleString('id-ID'), poin: n > 0 ? `+${n}` : n, ket: k
-                });
-                document.getElementById('poin-'+id).value = ''; document.getElementById('ket-'+id).value = '';
-            });
-        }
-
-        function loadHistory(id) {
-            db.ref('history/' + id).on('value', (snap) => {
-                const list = document.getElementById('siswaHistoryList');
-                list.innerHTML = '';
-                const data = snap.val();
-                if(!data) return;
-                Object.values(data).reverse().forEach(h => {
-                    list.innerHTML += `<div class="p-3 bg-slate-50 rounded-xl border flex justify-between items-center shadow-sm">
-                        <div class="text-xs"><b>${h.ket}</b><br><span class="text-[9px] text-gray-400">${h.tgl}</span></div>
-                        <div class="font-black ${h.poin.toString().includes('+') ? 'text-green-600' : 'text-red-600'}">${h.poin}</div>
-                    </div>`;
-                });
-            });
-        }
-
-        function bukaMenuCetak() { document.getElementById('modalCetak').classList.remove('hidden'); }
-        function tutupMenuCetak() { document.getElementById('modalCetak').classList.add('hidden'); }
-
-        function cetakLaporan(tipe) {
-            const filter = document.getElementById('filterKelas').value;
-            document.getElementById('tglCetak').innerText = new Date().toLocaleString();
-            
-            if(tipe === 'sekolah') {
-                document.getElementById('filterKelas').value = "Semua";
-                document.getElementById('judulCetak').innerText = "Rekapitulasi Seluruh Sekolah";
-                renderAdminTable();
-            } else if(tipe === 'kelas') {
-                if(filter === "Semua") return alert("Pilih kelas di tabel terlebih dahulu!");
-                document.getElementById('judulCetak').innerText = "Rekapitulasi " + filter;
-            } else if(tipe === 'siswa') {
-                const nama = prompt("Masukkan Nama Siswa yang ingin dicetak riwayatnya:");
-                const s = allSiswa.find(x => x.nama.toLowerCase() === nama.toLowerCase());
-                if(!s) return alert("Siswa tidak ditemukan!");
-                alert("Mencetak riwayat detail " + s.nama);
-                // Logika khusus cetak riwayat individu bisa ditambahkan, sementara cetak klasemen aktif.
-            }
-            
-            tutupMenuCetak();
-            window.print();
-        }
-
-        function tambahSiswa() {
-            const n = document.getElementById('newSiswaNama').value.trim();
-            const k = document.getElementById('newSiswaKelas').value;
-            if(!n) return;
-            const id = (n + k).replace(/\s+/g, '-').toLowerCase();
-            db.ref('dataSiswa/' + id).set({ nama: n, kelas: k, bintang: 0 });
-            document.getElementById('newSiswaNama').value = '';
-        }
-
-        preloadData();
-    </script>
-</body>
-</html>
-
+                const total = (snap.val().b
